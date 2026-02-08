@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Valentine Week 💖</title>
+
+<style>
+body{
+  margin:0;
+  font-family:'Segoe UI',sans-serif;
+  background:linear-gradient(120deg,#ffd6e8,#fff1f7);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+
+/* START SCREEN */
+.start{
+  position:fixed;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:linear-gradient(120deg,#ffd6e8,#fff1f7);
+  z-index:2000;
+}
+
+.start h1{
+  color:#b30059;
+  margin-bottom:20px;
+}
+
+.start button{
+  padding:12px 26px;
+  border:none;
+  border-radius:30px;
+  font-size:16px;
+  margin:8px;
+  cursor:pointer;
+}
+.yes{ background:#b30059; color:#fff; }
+.no{ background:#ddd; }
+
+/* CONFETTI */
+#confetti{
+ position:fixed;
+ inset:0;
+ pointer-events:none;
+ z-index:1500;
+}
+
+.confetti span{
+  position:absolute;
+  font-size:22px;
+  animation:fall 3s linear infinite;
+}
+@keyframes fall{
+  0%{transform:translateY(-10vh);opacity:1}
+  100%{transform:translateY(110vh);opacity:0}
+}
+
+
+/* MAIN */
+h1{
+  text-align:center;
+  padding:20px;
+  color:#b30059;
+}
+
+.envelopes{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(120px,1fr));
+  gap:20px;
+  padding:20px;
+}
+
+.envelope{
+  background:#fff;
+  border-radius:14px;
+  padding:18px;
+  text-align:center;
+  cursor:pointer;
+  box-shadow:0 6px 14px rgba(0,0,0,.15);
+  transition:.3s;
+}
+.envelope:hover{ transform:translateY(-6px); }
+.envelope.locked{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.envelope span{ font-size:34px; display:block; }
+.envelope p{ margin:6px 0 0; font-weight:600; }
+
+/* MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+}
+.modal.open{ display:flex; }
+
+.letter{
+  background:#fff;
+  width:90%;
+  max-width:420px;
+  border-radius:18px;
+  padding:22px;
+  position:relative;
+}
+
+.close-btn{
+  position:absolute;
+  top:10px;
+  right:14px;
+  font-size:22px;
+  border:none;
+  background:none;
+  cursor:pointer;
+}
+
+textarea{
+  width:100%;
+  height:240px;
+  border:none;
+  resize:none;
+  outline:none;
+  line-height:1.6;
+}
+
+/* ANIMATION SCENE */
+.scene{
+  position:fixed;
+  bottom:20px;
+  width:100%;
+  display:none;
+  justify-content:center;
+  z-index:999;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-10px)}
+}
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.3)}
+}
+.couple,.proposal,.hug,.rose{
+  font-size:48px;
+  display:flex;
+  gap:16px;
+  animation:float 3s ease-in-out infinite;
+}
+.heart{ animation:pulse 1.5s infinite; }
+</style>
+</head>
+
+<body>
+
+<!-- START -->
+<div id="start" class="start">
+  <h1>Will you be my Valentine? 🤍</h1>
+  <button class="yes" onclick="sayYes()">Yes 💖</button>
+  <button class="no" onclick="sayNo()">No 🙄</button>
+</div>
+
+<div id="confetti"></div>
+<div id="countdownBox">
+  <h3 id="countdownTitle">Next surprise unlocks in</h3>
+  <div id="countdownTimer">00d : 00h : 00m : 00s</div>
+</div>
+
+<h1>Valentine Week 💌</h1>
+
+<div class="envelopes" id="envelopes" style="display:none"></div>
+
+
+<!-- LETTER -->
+<div id="modal" class="modal">
+  <div class="letter">
+    <button class="close-btn" onclick="closeLetter()">×</button>
+    <h2 id="title"></h2>
+    <textarea id="text" readonly></textarea>
+  </div>
+</div>
+
+<div id="scene" class="scene"></div>
+
+<script>
+    const today = new Date().toLocaleDateString('en-CA');
+const WEEK=[
+{
+  date:"2026-02-07",
+ icon:"🌹",title:"🌹 Rose Day",
+ text:`My first rose from you came as a gajra.
+Not a flower, but a feeling.The first rose you ever gave me will always stay alive in my memory. It was on 25th March 2025, when I was in my traditional outfit, and you placed a rose in my hands so gently. But what truly made my heart melt was the gajra you gave along with it — delicate, fragrant, and thoughtful. That moment wasn’t just about a flower; it was about how deeply you notice the little things about me. That rose didn’t just bloom in my hands, it bloomed in my heart. 🌹✨`,
+ scene:`<div class="rose"><span>🧑‍🦱</span><span>🌹</span><span>👩‍🦰</span></div>`
+},
+{
+  date:"2026-02-09",
+ icon:"🍫",title:"🍫 Chocolate Day",
+ text:`29th Nov 2019.
+Bubble Dairy Milk.
+Small chocolate. Forever memory.Sweetness wrapped in memory.Chocolate Day always reminds me of sweetness wrapped in memories. On 29th November, you gave me a Bubbly Dairy Milk, and somehow it tasted sweeter than any chocolate I’ve ever had. Maybe because it wasn’t just chocolate — it was care, affection, and a moment frozen in time. Even today, every bite of chocolate reminds me of you and that soft, happy feeling. 🍫✨`,
+ scene:`<div class="couple"><span>🧑‍🦱</span><span>🍫</span><span>👩‍🦰</span></div>`
+},
+{
+  date:"2026-02-10",
+ icon:"🧸",title:"🧸 Teddy Day",
+ text:`You are my living teddy bear.
+My comfort. My warmth.I don’t need a teddy bear, because you are my living teddy bear. Your presence comforts me, your warmth makes me feel safe, and your hugs feel like home. When life feels heavy, you become my soft place to land. You’re not something I hold — you’re someone I feel. 🧸🤍`,
+ scene:`<div class="couple"><span>🧑‍🦱</span><span>🧸</span><span>👩‍🦰</span></div>`
+},
+{
+ date:"2026-02-08",
+ icon:"💍",title:"💍 Propose Day",
+ text:`You proposed on 29th Nov 2019.
+I proposed again on 2nd May 2025.Two proposals, one love.Our story carries two beautiful proposals, each with its own magic. On 29th November 2019, you proposed to me first — a moment that quietly changed everything. Years later, on 2nd May 2025, I proposed to you, not because I had to, but because my heart chose you all over again. Two proposals, years apart, yet the same feeling — love finding its way back home. 💍🤍`,
+ scene:`<div class="proposal">
+  <span>🧑‍🦱</span>
+  <span>💍</span>
+  <span class="girl">👩‍🦰</span>
+</div>`
+},
+{
+ date:"2026-02-11",
+ icon:"🤝",title:"🤝 Promise Day",
+ text:`You promised many things.
+Some forgotten.
+Still, I choose trust.You’ve promised me many things, and I believe you mean them. But sometimes, when a few promises fade or are forgotten, it leaves little cracks in my heart — cracks that quietly turn into trust issues. I don’t need perfection, I just need consistency. I hope one day, your actions will remind me of your promises, not make me question them. 🤝🌙`,
+ scene:`<div class="couple"><span>🤝</span><span>❤️</span></div>`
+},
+{
+date:"2026-02-12",
+ icon:"🤍", title:"🤍 Hug Day",
+ text:`Our first hug after 2nd May
+at S2 Café.
+Silent. Healing.The first hug after 2nd May, at S2 Café, will always be special to me. It wasn’t just a hug — it was relief, reassurance, and emotions melting into silence. In that moment, everything felt calm, like the world paused just to let us breathe together. Some hugs don’t need words, and that one said everything. 🤗☕🤍`,
+ scene:`<div class="hug"><span>🧑‍🦱</span><span>👩‍🦰</span></div>`
+},
+{
+ date:"2026-02-14",
+ icon:"❤️",title:"❤️ Valentine’s Day",
+ text:`From school strangers
+to destiny bringing us back.
+Always us.It began quietly,
+back in 8th standard—
+same school, different worlds.
+We didn’t know each other then,
+yet somehow, time had already noticed us.
+
+We became friends without planning it,
+just small conversations, familiar smiles.
+And before I understood what was happening,
+you did.
+On 29th November 2019,
+you found the courage to tell me how you felt—
+and I said yes.
+
+Then life changed.
+
+The world paused,
+the pandemic arrived,
+and distance replaced everything we knew.
+We lost contact,
+and honestly,
+I never imagined we would meet again.
+
+I tried to forget—
+about us, about those moments,
+about what we once were.
+But some feelings don’t leave quietly.
+No matter how much you try,
+they stay.
+
+And then destiny reminded me it was real.
+
+In December 2024,
+on the platform of Amberनाथ station,
+we met again.
+Unexpected. Unplanned.
+A moment that felt like a complete U-turn in my life.
+
+The beginning wasn’t perfect.
+Some things happened.
+Some days were heavy.
+But you trusted me—
+and that meant more than you’ll ever know.
+
+Now it’s just us.
+We live, we laugh,
+we argue, we fight—
+but we always find our way back to each other.
+
+And that’s how I know:
+this isn’t just a story from the past,
+it’s one we’re still writing—
+together.`,
+ scene:`<div class="couple"><span>🧑‍🦱</span><span class="heart">❤️</span><span>👩‍🦰</span></div>`
+}
+];
+
+function sayYes(){
+ document.getElementById("start").style.display="none";
+ renderEnvelopes();
+ startCountdown();   // ⭐ ADD THIS
+ celebrate();
+ setTimeout(()=>document.getElementById("confetti").innerHTML="",2500);
+}
+
+function sayNo(){
+ alert("ashi ek chamat khashil na… 😤\nchupchap YES kr ❤️");
+}
+function startCountdown(){
+  const today = new Date().toLocaleDateString('en-CA');
+
+  // find next locked day
+  const nextDay = WEEK.find(d => d.date > today);
+
+  if(!nextDay){
+    document.getElementById("countdownBox").style.display="none";
+    return;
+  }
+
+  const target = new Date(nextDay.date + "T00:00:00");
+
+  setInterval(()=>{
+    const now = new Date();
+    const diff = target - now;
+
+    if(diff <= 0){
+      location.reload(); // unlock automatically
+      return;
+    }
+
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff / (1000*60*60)) % 24);
+    const m = Math.floor((diff / (1000*60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("countdownTimer").innerText =
+      `${d}d : ${h}h : ${m}m : ${s}s`;
+
+  },1000);
+}
+
+function renderEnvelopes(){
+ const box=document.getElementById("envelopes");
+ box.style.display="grid";
+ box.innerHTML="";
+ WEEK.forEach((d,i)=>{
+   const locked = today < d.date;
+   box.innerHTML+=`
+   <div class="envelope ${locked?'locked':''}" onclick="handleOpen(${i},${locked})">
+     <span>${d.icon}</span>
+     <p>${d.title.split(' ')[1]}</p>
+     ${locked?'🔒':''}
+   </div>`;
+ });
+}
+function handleOpen(i,locked){
+ if(locked){
+   alert("This envelope will open on its special day 🤍");
+   return;
+ }
+ openLetter(i);
+}
+function openLetter(i){
+ const w=WEEK[i];
+
+ const scene=document.getElementById("scene");
+ scene.innerHTML="";          // ⭐ CLEAR OLD
+ scene.style.display="none";  // ⭐ RESET
+
+ document.getElementById("title").innerText=w.title;
+ document.getElementById("text").value=w.text;
+ document.getElementById("modal").classList.add("open");
+
+ scene.innerHTML=w.scene;
+ scene.style.display="flex";
+}
+
+function closeLetter(){
+ document.getElementById("modal").classList.remove("open");
+ const scene=document.getElementById("scene");
+ scene.style.display="none";
+ scene.innerHTML="";
+}
+function celebrate(){
+ const c=document.getElementById("confetti");
+ const emojis=["🎉","💖","✨","❤️"];
+ for(let i=0;i<40;i++){
+  const s=document.createElement("span");
+  s.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+  s.style.left=Math.random()*100+"%";
+  s.style.animationDelay=Math.random()*2+"s";
+  c.appendChild(s);
+ }
+ setTimeout(()=>c.innerHTML="",2500);
+}
+</script>
+
+</body>
+</html>
